@@ -1,32 +1,45 @@
-apply plugin: 'com.android.application'
-
+apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'maven'
 
 android {
     compileSdkVersion 28
+
+
     defaultConfig {
-        applicationId "com.knight.plugin"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
 
-    implementation project(":pluginlibrary")
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            //GVA的参数
+            pom.groupId = 'com.knight.plugin'//组id
+            pom.artifactId = 'pluginlibrary'//名称
+            pom.version = '1.0.0'//版本号
+            repository(url: uri('../repo'))//发布的目录
+        }
+    }
 }

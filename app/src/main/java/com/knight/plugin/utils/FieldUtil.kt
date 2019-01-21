@@ -6,7 +6,7 @@ import java.lang.reflect.Field
 object FieldUtil {
 
     @Throws(Exception::class)
-    fun getField(clazz: Class<*>, target: Any, name: String): Any {
+    fun getField(clazz: Class<*>, target: Any?, name: String): Any {
         val field = clazz.getDeclaredField(name)
         field.isAccessible = true
         return field.get(target)

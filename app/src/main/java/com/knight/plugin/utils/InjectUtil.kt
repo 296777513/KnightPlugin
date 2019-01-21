@@ -18,7 +18,7 @@ object InjectUtil {
     @Throws(Exception::class)
     fun inject(context: Context, origin: ClassLoader) {
         var pluginFile =
-            context.getExternalFilesDir("plugin")// /sotrage/emulated/0/Android/data/$packageName/files/plugin
+            context.filesDir.listFiles()[0]// /sotrage/emulated/0/Android/data/$packageName/files/plugin
         if (pluginFile == null || !pluginFile.exists() || pluginFile.listFiles().isEmpty()) {
             Log.i(TAG, "this plugin file is not exist")
             return

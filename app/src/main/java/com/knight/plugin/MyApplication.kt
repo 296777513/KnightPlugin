@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.res.AssetManager
 import android.content.res.Resources
+import android.util.Log
 import com.knight.plugin.utils.HookHelper
 import com.knight.plugin.utils.InjectUtil
 
@@ -26,7 +27,10 @@ class MyApplication : Application() {
         val clazz = AssetManager::class.java
         val assetManager = clazz.newInstance()
         val method = clazz.getMethod("addAssetPath", String::class.java)
-        method.invoke(assetManager, getExternalFilesDir("plugin").listFiles()[0].absoluteFile)
+        val absoluteFile = filesDir.listFiles()[0].listFiles()[0].absolutePath
+        Log.i("liyachao1", "name: ${absoluteFile}")
+
+        method.invoke(assetManager, absoluteFile)
         pluginResource = Resources(assetManager, resources.displayMetrics, resources.configuration)
     }
 

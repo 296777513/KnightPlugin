@@ -9,19 +9,18 @@ import java.lang.Exception
 import java.lang.reflect.Proxy
 
 object HookHelper {
-    const val TRANSFER_INTERNT = "transfer_intent"
+    const val TRANSFER_INTENT = "transfer_intent"
 
     @SuppressLint("PrivateApi")
     @JvmStatic
     @Throws(Exception::class)
     fun hookAMS() {
-        var singleton: Any? = null
-        if (Build.VERSION.SDK_INT >= 26) { //大于等于8.0
+        val singleton = if (Build.VERSION.SDK_INT >= 26) { //大于等于8.0
             val clazz = Class.forName("android.app.ActivityManager")
-            singleton = FieldUtil.getField(clazz, null, "IActivityManagerSingleton") //拿到静态字段
+            FieldUtil.getField(clazz, null, "IActivityManagerSingleton") //拿到静态字段
         } else { // 8.0以下
             val activityManagerNativeClazz = Class.forName("android.app.ActivityManagerNative")
-            singleton = FieldUtil.getField(activityManagerNativeClazz, null, "gDefault")// get the static field
+            FieldUtil.getField(activityManagerNativeClazz, null, "gDefault")// get the static field
         }
 
         val singleClazz = Class.forName("android.util.Singleton")
@@ -42,6 +41,6 @@ object HookHelper {
         val activityThreadClazz = Class.forName("android.app.ActivityThread")
         val activityThread = FieldUtil.getField(activityThreadClazz, null, "sCurrentActivityThread")
         val mH = FieldUtil.getField(activityThreadClazz, activityThread, "mH")
-        FieldUtil.setField(Handler::class.java, mH, "mCallbacm", HCallback())
+        FieldUtil.setField(Handler::class.java, mH, "mCallback", HCallback())
     }
 }

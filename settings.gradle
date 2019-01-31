@@ -1,1 +1,1 @@
-include ':app', ':plugin', ':pluginlibrary'
+include ':app', ':plugin', ':pluginlibrary', ':hotfixlibrary'

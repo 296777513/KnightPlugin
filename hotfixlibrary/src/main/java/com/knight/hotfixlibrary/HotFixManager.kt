@@ -16,7 +16,6 @@ object HotFixManager {
     const val JAR_SUFFIX = ".jar"
     const val APK_SUFFIX = ".apk"
     const val SOURCE_DIR = "patch"
-    const val OPTIMIZE_DIR = "odex"
 
     @Throws(IllegalAccessException::class, NoSuchFieldException::class, ClassNotFoundException::class)
     fun startFix(sourceFile: File, optFile: File, pathClassLoader: ClassLoader) {
@@ -36,9 +35,9 @@ object HotFixManager {
             if (it.name.startsWith(SOURCE_DIR) && it.name.endsWith(DEX_SUFFIX)
                 || it.name.endsWith(JAR_SUFFIX)
                 || it.name.endsWith(APK_SUFFIX)
-            ) {
+            ) {// 遍历查找以.dex .jar .apk结尾的文件
                 if (i != 0) {
-                    sb.append(File.pathSeparator)
+                    sb.append(File.pathSeparator)//使用文件分隔符，将这些文件的路径分隔开
                 }
                 sb.append(it.absolutePath)
             }
@@ -47,13 +46,16 @@ object HotFixManager {
         val dexPath = sb.toString()
         val optPath = optFile.absolutePath
 
-        val dexClassLoader = DexClassLoader(dexPath, optPath, null, pathClassLoader)
-        val pathElements = getElements(pathClassLoader)
-        val dexElements = getElements(dexClassLoader)
-        val combineArray = combineArray(pathElements, dexElements)
-        setDexElements(pathClassLoader, combineArray)
+        val dexClassLoader = DexClassLoader(dexPath, optPath, null, pathClassLoader)//使用DexClassLoader来加载我们自己的类
+        val pathElements = getElements(pathClassLoader)// 获取PathClassLoader的Element数组
+        val dexElements = getElements(dexClassLoader)// 获取DexClassLoader的Element数组
+        val combineArray = combineArray(pathElements, dexElements) // 合并上面两个数组
+        setDexElements(pathClassLoader, combineArray)// 将合并的数组插入到PathClassLoader中
     }
 
+    /**
+     * 获取ClassLoader中的dexElements数组
+     */
     private fun getElements(classLoader: ClassLoader): Any {
         val baseDexClassLoaderClazz = Class.forName(CLASS_NAME)
         val pathListField = baseDexClassLoaderClazz.getDeclaredField(FIELD_PATH_LIST)
@@ -64,6 +66,9 @@ object HotFixManager {
         return dexElementsField.get(dexPathList)
     }
 
+    /**
+     * 合并Element数组
+     */
     private fun combineArray(pathElements: Any, dexElements: Any): Any {
         val componentType = pathElements.javaClass.componentType
         val i = Array.getLength(pathElements)
@@ -75,6 +80,9 @@ object HotFixManager {
         return result
     }
 
+    /**
+     * 使用反射设置合并后的Element数组
+     */
     @Throws(ClassNotFoundException::class, NoSuchFieldException::class)
     private fun setDexElements(classLoader: ClassLoader, value: Any) {
         val baseDexClassLoaderClazz = Class.forName(CLASS_NAME)

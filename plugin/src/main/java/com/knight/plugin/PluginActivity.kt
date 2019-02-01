@@ -12,6 +12,23 @@ class PluginActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_plugin)
+        Log.i("liyachao","PluginActivity onCreate")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.i("liyachao","PluginActivity onResume")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.i("liyachao","PluginActivity onPause")
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.i("liyachao","PluginActivity onPause")
     }
 
 

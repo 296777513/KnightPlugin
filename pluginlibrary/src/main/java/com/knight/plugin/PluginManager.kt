@@ -2,6 +2,7 @@ package com.knight.plugin
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.app.Instrumentation
 import android.content.Context
 import android.content.res.AssetManager
 import android.content.res.Resources
@@ -26,6 +27,22 @@ object PluginManager {
 
     var placeHolderActivityPath = "com.knight.plugin.PlaceHolderActivity"
 
+    @SuppressLint("PrivateApi")
+    @Throws(Exception::class)
+    @JvmStatic
+    fun hookActivityThreadInstrumentation(application: Application) {
+        val activityThreadClazz = Class.forName("android.app.ActivityThread")
+        val activityThreadField = activityThreadClazz.getDeclaredField("sCurrentActivityThread")
+        activityThreadField.isAccessible = true
+        val activityThread = activityThreadField.get(null)
+
+        val instrumentationField = activityThreadClazz.getDeclaredField("mInstrumentation")
+        instrumentationField.isAccessible = true
+        val instrumentation = instrumentationField.get(activityThread) as Instrumentation
+        val proxy = InstrumentationProxy(instrumentation, application.packageManager)
+        instrumentationField.set(activityThread, proxy)
+    }
+
 
     @Throws(Exception::class)
     @JvmStatic
@@ -38,13 +55,14 @@ object PluginManager {
         if (!pluginFile.exists()) {
             throw RuntimeException("plugin file is not exist")
         }
-        if (Build.VERSION.SDK_INT >= 28) {
-            throw RuntimeException("not support Android 9.0")
-        }
+//        if (Build.VERSION.SDK_INT >= 28) {
+//            throw RuntimeException("not support Android 9.0")
+//        }
         this.placeHolderActivityPath = placeHolderActivityPath
         inject(application, application.classLoader, pluginPath)
-        hookAMS()
-        hookH()
+        hookActivityThreadInstrumentation(application)
+//        hookAMS()
+//        hookH()
         return initPluginResource(application, pluginPath)
     }
 

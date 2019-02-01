@@ -3,12 +3,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'maven'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion COMPILE_SDK_VERSION as int
 
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion COMPILE_SDK_VERSION as int
         versionCode 1
         versionName "1.0"
 

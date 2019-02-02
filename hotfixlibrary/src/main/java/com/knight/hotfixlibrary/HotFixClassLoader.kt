@@ -15,6 +15,12 @@ class HotFixClassLoader(parent: ClassLoader) : ClassLoader(parent) {
         return super.loadClass(name)
     }
 
+    override fun loadClass(name: String?, resolve: Boolean): Class<*> {
+        Log.i("liyachao", "HotFixClassLoader loadClass: $name")
+
+        return super.loadClass(name, resolve)
+    }
+
 
     companion object {
         @JvmStatic

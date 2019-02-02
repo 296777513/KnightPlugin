@@ -35,7 +35,7 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-//        HotFixClassLoader.inject(classLoader)
+        HotFixClassLoader.inject(classLoader)
     }
 
     override fun getResources(): Resources {

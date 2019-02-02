@@ -1,5 +1,6 @@
 package com.knight.hotfixlibrary
 
+import android.app.Application
 import android.util.Log
 import dalvik.system.DexClassLoader
 import java.io.File
@@ -18,7 +19,7 @@ object HotFixManager {
     const val SOURCE_DIR = "patch"
 
     @Throws(IllegalAccessException::class, NoSuchFieldException::class, ClassNotFoundException::class)
-    fun startFix(sourceFile: File, optFile: File, pathClassLoader: ClassLoader) {
+    fun startFix(sourceFile: File, optFile: File, application: Application) {
         if (!sourceFile.exists()) {
             Log.i(TAG, "patch file is not exist~")
             return
@@ -32,9 +33,9 @@ object HotFixManager {
         val listFiles = sourceFile.listFiles()
         for (i in 0 until listFiles.size) {
             val it = listFiles[i]
-            if (it.name.startsWith(SOURCE_DIR) && it.name.endsWith(DEX_SUFFIX)
-                || it.name.endsWith(JAR_SUFFIX)
-                || it.name.endsWith(APK_SUFFIX)
+            if (it.name.startsWith(SOURCE_DIR) && (it.name.endsWith(DEX_SUFFIX)
+                        || it.name.endsWith(JAR_SUFFIX)
+                        || it.name.endsWith(APK_SUFFIX))
             ) {// 遍历查找以.dex .jar .apk结尾的文件
                 if (i != 0) {
                     sb.append(File.pathSeparator)//使用文件分隔符，将这些文件的路径分隔开
@@ -42,15 +43,15 @@ object HotFixManager {
                 sb.append(it.absolutePath)
             }
         }
-
+        Log.i(TAG, sb.toString())
         val dexPath = sb.toString()
         val optPath = optFile.absolutePath
 
-        val dexClassLoader = DexClassLoader(dexPath, optPath, null, pathClassLoader)//使用DexClassLoader来加载我们自己的类
-        val pathElements = getElements(pathClassLoader)// 获取PathClassLoader的Element数组
+        val dexClassLoader = DexClassLoader(dexPath, optPath, null, application.classLoader)//使用DexClassLoader来加载我们自己的类
+        val pathElements = getElements(application.classLoader)// 获取PathClassLoader的Element数组
         val dexElements = getElements(dexClassLoader)// 获取DexClassLoader的Element数组
         val combineArray = combineArray(pathElements, dexElements) // 合并上面两个数组
-        setDexElements(pathClassLoader, combineArray)// 将合并的数组插入到PathClassLoader中
+        setDexElements(application.classLoader, combineArray)// 将合并的数组插入到PathClassLoader中
     }
 
     /**

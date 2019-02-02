@@ -5,10 +5,15 @@ import android.content.Context
 import android.content.res.Resources
 import android.util.Log
 import com.example.liyachao.permission.KnightPermission
+import com.knight.hotfixlibrary.HotFixClassLoader
+import com.knight.hotfixlibrary.HotFixManager
+import com.knight.plugin.hotfix.Function
 import java.io.File
 
 class MyApplication : Application() {
     var pluginResource: Resources? = null
+
+
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
         try {
@@ -25,8 +30,12 @@ class MyApplication : Application() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
         KnightPermission.init(this)
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+//        HotFixClassLoader.inject(classLoader)
     }
 
     override fun getResources(): Resources {

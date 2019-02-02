@@ -16,6 +16,7 @@ import java.lang.reflect.Array
 import java.lang.reflect.Proxy
 import kotlin.Exception
 
+
 object PluginManager {
     const val TAG = "InjectUtil"
     const val CLASS_BASE_DES_CLASSLOADER = "dalvik.system.BaseDexClassLoader"
@@ -55,15 +56,43 @@ object PluginManager {
         if (!pluginFile.exists()) {
             throw RuntimeException("plugin file is not exist")
         }
-//        if (Build.VERSION.SDK_INT >= 28) {
-//            throw RuntimeException("not support Android 9.0")
-//        }
         this.placeHolderActivityPath = placeHolderActivityPath
         inject(application, application.classLoader, pluginPath)
         hookActivityThreadInstrumentation(application)
 //        hookAMS()
 //        hookH()
+//        hookClassLoader(application)
         return initPluginResource(application, pluginPath)
+    }
+
+    @Throws(NoSuchFieldException::class, IllegalAccessException::class)
+    fun hookClassLoader(context: Application) {
+        // 获取Application类的mLoadedApk属性值
+        val mLoadedApk = FieldUtil.getField(context::class.java.superclass, context, "mLoadedApk")
+        // 获取其mClassLoader属性值以及属性字段
+        val mClassLoader = FieldUtil.getField(mLoadedApk.javaClass, mLoadedApk, "mClassLoader") as ClassLoader
+        val mClassLoaderField = FieldUtil.getField(mLoadedApk.javaClass, "mClassLoader")
+        // 替换成自己的ClassLoader
+        mClassLoaderField.set(mLoadedApk, object : ClassLoader() {
+            @Throws(ClassNotFoundException::class)
+            override fun loadClass(name: String): Class<*> {
+//                            var name = name
+//                            // 替换Activity
+//                            if (name.endsWith("MainActivity2")) {
+//                                Log.d(TAG, "loadClass: name = $name")
+//                                name = name.replace("MainActivity2", "MainActivity3")
+//                                Log.d(TAG, "loadClass: 替换后name = $name")
+//                            }
+                Log.i("liyachao1", "loadClass Name: $name")
+                return mClassLoader.loadClass(name)
+            }
+
+            override fun findClass(name: String?): Class<*> {
+                Log.i("liyachao1", "findClass Name: $name")
+                return super.findClass(name)
+            }
+        })
+
     }
 
     @Throws(Exception::class)
@@ -152,7 +181,7 @@ object PluginManager {
     }
 
 
-    private fun combineArray(pathElements: Any, dexElements: Any): Any {
+    fun combineArray(pathElements: Any, dexElements: Any): Any {
         val componentType = pathElements.javaClass.componentType
         val i = Array.getLength(pathElements)
         val j = Array.getLength(dexElements)

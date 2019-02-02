@@ -1,10 +1,16 @@
 package com.knight.plugin.hotfix;
 
-import android.widget.Toast;
-import com.example.liyachao.permission.KnightPermission;
-import com.knight.plugin.MyApplication;
 
 public class Function {
+
+    public Function() {
+        android.util.Log.i("liyachao", "function constructor");
+
+    }
+
+    static {
+        android.util.Log.i("liyachao", "function static");
+    }
 
     public void test() {
         throw new RuntimeException("error");

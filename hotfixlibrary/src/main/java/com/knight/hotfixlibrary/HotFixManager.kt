@@ -35,8 +35,7 @@ object HotFixManager {
             val it = listFiles[i]
             if (it.name.startsWith(SOURCE_DIR) && (it.name.endsWith(DEX_SUFFIX)
                         || it.name.endsWith(JAR_SUFFIX)
-                        || it.name.endsWith(APK_SUFFIX))
-            ) {// 遍历查找以.dex .jar .apk结尾的文件
+                        || it.name.endsWith(APK_SUFFIX))) {// 遍历查找以.dex .jar .apk结尾的文件
                 if (i != 0) {
                     sb.append(File.pathSeparator)//使用文件分隔符，将这些文件的路径分隔开
                 }

@@ -59,6 +59,7 @@ object PluginManager {
         this.placeHolderActivityPath = placeHolderActivityPath
         inject(application, application.classLoader, pluginPath)
         hookActivityThreadInstrumentation(application)
+
 //        hookAMS()
 //        hookH()
 //        hookClassLoader(application)

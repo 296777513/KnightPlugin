@@ -3,12 +3,16 @@ package com.knight.plugin
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.res.Resources
 import android.os.Bundle
+import android.os.Trace
 import android.widget.Button
+import android.widget.Toast
 import com.example.liyachao.permission.PermissionUtils
 import com.knight.hotfixlibrary.HotFixManager
 import com.knight.plugin.hotfix.Agent
 import java.io.File
+import java.util.*
 
 class MainActivity : Activity() {
 
@@ -18,7 +22,6 @@ class MainActivity : Activity() {
             setContentView(R.layout.activity_main1)
             findViewById<Button>(R.id.btn).setOnClickListener {
                 startActivity(Intent(this, Class.forName("com.knight.plugin.PluginActivity")))
-
             }
             findViewById<Button>(R.id.btn2).setOnClickListener {
                 val path = FileUtil.initPath("com.knight.plugin")
@@ -33,5 +36,9 @@ class MainActivity : Activity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         PermissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    override fun getResources(): Resources {
+        return super.getResources()
     }
 }
